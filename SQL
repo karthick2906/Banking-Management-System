@@ -1,0 +1,188 @@
+create database banking_management_system
+
+use banking_management_system
+
+create table customers (
+    customer_id int primary key,
+    customer_name varchar(50),
+    email varchar(100),
+    phone varchar(15),
+    city varchar(30),
+    branch_id int
+);
+
+insert into customers values
+(101, 'Karthik', 'karthik@gmail.com', '9876543210', 'Chennai', 1001),
+(102, 'Boomika', 'boomika@gmail.com', '9876543211', 'Coimbatore', 1002),
+(103, 'Roshini', 'roshini@gmail.com', '9876543212', 'Salem', 1003),
+(104, 'Arjun', 'arjun@gmail.com', '9876543213', 'Madurai', 1004),
+(105, 'Sneha', 'sneha@gmail.com', '9876543214', 'Erode', 1001),
+(106, 'Rahul', 'rahul@gmail.com', '9876543215', 'Trichy', 1002);
+
+select*from customers
+
+create table branches (
+    branch_id int primary key,
+    branch_name varchar(50),
+    branch_city varchar(30)
+);
+
+insert into branches values
+(1001, 'Main Branch', 'Chennai'),
+(1002, 'City Branch', 'Coimbatore'),
+(1003, 'Central Branch', 'Salem'),
+(1004, 'North Branch', 'Madurai'),
+(1005, 'South Branch', 'Trichy');
+
+select*from branches
+
+create table accounts (
+    account_id int primary key,
+    customer_id int,
+    account_type varchar(30),
+    balance decimal(10,2)
+);
+
+insert into accounts values
+(2001, 101, 'Savings', 50000),
+(2002, 102, 'Current', 75000),
+(2003, 103, 'Savings', 35000),
+(2004, 104, 'Salary', 90000),
+(2005, 105, 'Savings', 25000),
+(2006, 101, 'Current', 40000),
+(2007, 102, 'Savings', 60000);
+
+select*from accounts
+
+create table transactions (
+    transaction_id int primary key,
+    account_id int,
+    transaction_type varchar(30),
+    amount decimal(10,2),
+    transaction_date date
+);
+
+insert into transactions values
+(3001, 2001, 'Deposit', 10000, '2026-01-10'),
+(3002, 2002, 'Withdrawal', 5000, '2026-01-11'),
+(3003, 2003, 'Deposit', 15000, '2026-01-12'),
+(3004, 2004, 'Withdrawal', 20000, '2026-01-13'),
+(3005, 2005, 'Deposit', 8000, '2026-01-14'),
+(3006, 2006, 'Deposit', 12000, '2026-01-15'),
+(3007, 2007, 'Withdrawal', 7000, '2026-01-16');
+
+select*from transactions
+
+create table loans (
+    loan_id int primary key,
+    customer_id int,
+    loan_type varchar(30),
+    loan_amount decimal(12,2)
+);
+
+insert into loans values
+(4001, 101, 'Home Loan', 500000),
+(4002, 102, 'Personal Loan', 200000),
+(4003, 103, 'Education Loan', 150000),
+(4004, 104, 'Car Loan', 300000),
+(4005, 105, 'Home Loan', 700000);
+
+select*from loans
+
+create table employees (
+    employee_id int primary key,
+    employee_name varchar(50),
+    branch_id int,
+    manager_id int,
+    salary decimal(10,2)
+);
+
+insert into employees values
+(501, 'Murugan', 1001, null, 50000),
+(502, 'Shivani', 1002, 501, 45000),
+(503, 'Swetha', 1003, 501, 40000),
+(504, 'Ramya', 1004, 502, 55000),
+(505, 'Arun', 1001, 501, 35000),
+(506, 'Priya', 1002, 502, 60000);
+
+select*from employees
+
+
+----Inner_Join
+
+select 
+c.customer_name,
+a.account_id,
+a.account_type,
+a.balance
+from customers c
+inner join accounts a
+on c.customer_id = a.customer_id;
+
+----Left_Join
+
+select 
+c.customer_name,
+a.account_id,
+a.account_type
+from customers c
+left join accounts a
+on c.customer_id = a.customer_id;
+
+----Right_Join
+
+select 
+c.customer_name,
+a.account_id,
+a.balance
+from customers c
+right join accounts a
+on c.customer_id = a.customer_id;
+
+----Multiple_table_join
+
+select 
+c.customer_name,
+b.branch_name,
+a.account_type,
+a.balance,
+l.loan_type,
+l.loan_amount
+from customers c
+left join branches b
+on c.branch_id = b.branch_id
+left join accounts a
+on c.customer_id = a.customer_id
+left join loans l
+on c.customer_id = l.customer_id;
+
+-----sum of customers balance Group_By
+
+select c.customer_name,
+       sum(a.balance) as total_balance
+from customers c
+inner join accounts a
+on c.customer_id = a.customer_id
+group by c.customer_name;
+
+----Avg of customers balance and Having
+
+select c.customer_name,
+       avg(a.balance) as avg_balance
+from customers c
+inner join accounts a
+on c.customer_id = a.customer_id
+group by c.customer_name
+having avg(a.balance) > 40000;
+
+-----maximam of customers balance and Order by
+
+select c.customer_name,
+       max(a.balance) as highest_balance
+from customers c
+inner join accounts a
+on c.customer_id = a.customer_id
+group by c.customer_name
+order by highest_balance desc;
+
+
